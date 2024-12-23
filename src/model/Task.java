@@ -8,10 +8,17 @@ public class Task {
     private String description;
     private Status status;
 
-    public Task(String title, String description) {
+    public Task(String title, String description, Status status) {
         this.title = title;
         this.description = description;
-        this.status = Status.NEW;
+        this.status = status;
+    }
+
+    public Task(int id, String taskName, String description, Status taskStatus) {
+        this.id = id;
+        this.title = taskName;
+        this.description = description;
+        this.status = taskStatus;
     }
 
     public Integer getId() {
@@ -48,7 +55,7 @@ public class Task {
 
     @Override
     public String toString() {
-        String format = "Task ID: %d, название: '%s', описание: '%s', статус: %s \n";
+        String format = "Task ID: %d, название: '%s', описание: '%s', статус: %s";
         return String.format(format, id, title, description, status);
     }
 

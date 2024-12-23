@@ -8,7 +8,12 @@ public class Epic extends Task {
     private final Collection<Integer> subtaskIds;
 
     public Epic(String title, String description) {
-        super(title, description);
+        super(title, description, Status.NEW);
+        subtaskIds = new ArrayList<>();
+    }
+
+    public Epic(int id, String title, String description, Status status) {
+        super(id, title, description, status);
         subtaskIds = new ArrayList<>();
     }
 
@@ -26,7 +31,7 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        String format = "Epic ID: %d, название: '%s', описание: '%s', статус: %s \n";
+        String format = "Epic ID: %d, название: '%s', описание: '%s', статус: %s";
         return String.format(format, super.getId(), super.getTitle(), super.getDescription(), super.getStatus());
     }
 
@@ -38,6 +43,7 @@ public class Epic extends Task {
         Epic epic = (Epic) o;
         return Objects.equals(subtaskIds, epic.subtaskIds);
     }
+
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), subtaskIds);
