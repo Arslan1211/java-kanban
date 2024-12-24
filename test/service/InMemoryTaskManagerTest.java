@@ -17,7 +17,7 @@ class InMemoryTaskManagerTest {
 
     @BeforeEach
     public void init() {
-        taskManager = Managers.getDefault();
+        taskManager = Managers.getDeafultManager();
 
         task1 = new Task("Построить дом","Нанять строителей", Status.NEW);
         task2 = new Task("Заварить чай","Налить кипяток", Status.DONE);
@@ -57,13 +57,13 @@ class InMemoryTaskManagerTest {
         Assertions.assertEquals(quantityViewTaskHistory, taskManager.getHistory().size());
         String expected =
                 "[Task ID: 1, название: 'Построить дом', описание: 'Нанять строителей', статус: NEW, " +
-                        "Task ID: 2, название: 'Заварить чай', описание: 'Налить кипяток', статус: DONE, " +
-                        "Epic ID: 3, название: 'Подарить подарок', описание: 'Купить подарок', статус: IN_PROGRESS, " +
-                        "Epic ID: 4, название: 'Убрать квартиру', описание: 'Помыть полы', статус: IN_PROGRESS, " +
-                        "Subtask ID: 5, название: 'Написать сочинение', описание: 'Выбрать тему', статус: NEW, " +
-                        "Subtask ID: 6, название: 'Написать курсовую', описание: 'Выбрать тему', статус: IN_PROGRESS, " +
-                        "Subtask ID: 7, название: 'Сдать диплом', описание: 'Подготовить презентацию', статус: DONE, " +
-                        "Subtask ID: 8, название: 'Сдать зачет', описание: 'Повторить теорию', статус: NEW]";
+                 "Task ID: 2, название: 'Заварить чай', описание: 'Налить кипяток', статус: DONE, " +
+                 "Epic ID: 3, название: 'Подарить подарок', описание: 'Купить подарок', статус: IN_PROGRESS, " +
+                 "Epic ID: 4, название: 'Убрать квартиру', описание: 'Помыть полы', статус: IN_PROGRESS, " +
+                 "Subtask ID: 5, название: 'Написать сочинение', описание: 'Выбрать тему', статус: NEW, " +
+                 "Subtask ID: 6, название: 'Написать курсовую', описание: 'Выбрать тему', статус: IN_PROGRESS, " +
+                 "Subtask ID: 7, название: 'Сдать диплом', описание: 'Подготовить презентацию', статус: DONE, " +
+                 "Subtask ID: 8, название: 'Сдать зачет', описание: 'Повторить теорию', статус: NEW]";
         String actually = taskManager.getHistory().toString();
         Assertions.assertEquals(expected, actually);
 
@@ -163,9 +163,9 @@ class InMemoryTaskManagerTest {
 
         String expected =
                 "[Subtask ID: 3, название: 'Написать сочинение', описание: 'Выбрать тему', статус: NEW, " +
-                        "Subtask ID: 4, название: 'Написать курсовую', описание: 'Выбрать тему', статус: IN_PROGRESS, " +
-                        "Subtask ID: 5, название: 'Сдать диплом', описание: 'Подготовить презентацию', статус: DONE, " +
-                        "Subtask ID: 6, название: 'Сдать зачет', описание: 'Повторить теорию', статус: NEW]";
+                 "Subtask ID: 4, название: 'Написать курсовую', описание: 'Выбрать тему', статус: IN_PROGRESS, " +
+                 "Subtask ID: 5, название: 'Сдать диплом', описание: 'Подготовить презентацию', статус: DONE, " +
+                 "Subtask ID: 6, название: 'Сдать зачет', описание: 'Повторить теорию', статус: NEW]";
         String actually = taskManager.findAllSubtasks().toString();
 
         Assertions.assertEquals(expected, actually);
