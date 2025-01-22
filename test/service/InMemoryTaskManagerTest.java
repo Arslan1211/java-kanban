@@ -402,7 +402,5 @@ class InMemoryTaskManagerTest {
         taskManager.deleteAllSubtasks();
 
         Assertions.assertTrue(taskManager.findAllSubtasks().isEmpty());
-
-
     }
 }
