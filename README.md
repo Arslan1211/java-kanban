@@ -239,22 +239,4 @@ public interface HistoryManager {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </details>
