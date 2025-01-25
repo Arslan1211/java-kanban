@@ -88,4 +88,31 @@ class InMemoryHistoryManagerTest {
 
         Assertions.assertEquals(expected, actually);
     }
+
+    @Test
+    void removeByID() {
+        historyManager.addHistory(task1);
+        historyManager.addHistory(task2);
+
+        historyManager.addHistory(epic1);
+        historyManager.addHistory(epic2);
+
+        historyManager.addHistory(subtask1);
+        historyManager.addHistory(subtask2);
+        historyManager.addHistory(subtask3);
+        historyManager.addHistory(subtask4);
+        historyManager.remove(2);
+        historyManager.remove(4);
+        historyManager.remove(7);
+        historyManager.remove(8);
+
+        String expected =
+                "[Task ID: 1, название: 'Построить дом', описание: 'Нанять строителей', статус: NEW, " +
+                        "Epic ID: 3, название: 'Подарить подарок', описание: 'Купить подарок', статус: NEW, " +
+                        "Subtask ID: 5, название: 'Написать сочинение', описание: 'Выбрать тему', статус: NEW, " +
+                        "Subtask ID: 6, название: 'Написать курсовую', описание: 'Выбрать тему', статус: IN_PROGRESS]";
+        String actually = historyManager.getHistory().toString();
+
+        Assertions.assertEquals(expected, actually);
+    }
 }
