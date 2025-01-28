@@ -9,43 +9,43 @@ import java.util.List;
 
 public interface TaskManager {
 
-    List<Task> getHistory();
+  List<Task> getHistory();
 
-    Task createTask(Task task);
+  Task createTask(Task task);
 
-    Epic createEpic(Epic epic);
+  Epic createEpic(Epic epic);
 
-    Subtask createSubtask(Subtask subtask);
+  Subtask createSubtask(Subtask subtask);
 
-    Collection<Task> findAllTasks();
+  Collection<Task> findAllTasks();
 
-    Collection<Epic> findAllEpics();
+  Collection<Epic> findAllEpics();
 
-    Collection<Subtask> findAllSubtasks();
+  Collection<Subtask> findAllSubtasks();
 
-    Collection<Subtask> findAllSubtasksByEpic(int epicId);
+  Collection<Subtask> findAllSubtasksByEpic(int epicId);
 
-    Task findTaskById(Integer id);
+  Task findTaskById(Integer id);
 
-    Epic findEpicById(Integer id);
+  Epic findEpicById(Integer id);
 
-    Subtask findSubtaskById(Integer id);
+  Subtask findSubtaskById(Integer id);
 
-    Task updateTask(Task task);
+  Task updateTask(Task task);
 
-    Epic updateEpic(Epic epic);
+  Epic updateEpic(Epic epic);
 
-    Subtask updateSubtask(Subtask subtask);
+  Subtask updateSubtask(Subtask subtask);
 
-    Task deleteTaskById(int id);
+  Task deleteTaskById(int id);
 
-    Epic deleteEpicById(int id);
+  Epic deleteEpicById(int id);
 
-    Subtask deleteSubtaskById(int id);
+  Subtask deleteSubtaskById(int id);
 
-    void deleteAllTasks();
+  void deleteAllTasks();
 
-    void deleteAllEpics();
+  void deleteAllEpics();
 
-    void deleteAllSubtasks();
+  void deleteAllSubtasks();
 }

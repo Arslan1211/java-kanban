@@ -3,75 +3,80 @@ package model;
 import java.util.Objects;
 
 public class Task {
-    private int id;
-    private String title;
-    private String description;
-    private Status status;
 
-    public Task(String title, String description, Status status) {
-        this.title = title;
-        this.description = description;
-        this.status = status;
-    }
+  private int id;
+  private String title;
+  private String description;
+  private Status status;
 
-    public Task(int id, String taskName, String description, Status taskStatus) {
-        this.id = id;
-        this.title = taskName;
-        this.description = description;
-        this.status = taskStatus;
-    }
+  public Task(String title, String description, Status status) {
+    this.title = title;
+    this.description = description;
+    this.status = status;
+  }
 
-    public Integer getId() {
-        return id;
-    }
+  public Task(int id, String taskName, String description, Status taskStatus) {
+    this.id = id;
+    this.title = taskName;
+    this.description = description;
+    this.status = taskStatus;
+  }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public Integer getId() {
+    return id;
+  }
 
-    public String getTitle() {
-        return title;
-    }
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public Status getStatus() {
-        return status;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public void setStatus(Status status) {
-        this.status = status;
-    }
+  public Status getStatus() {
+    return status;
+  }
 
-    @Override
-    public String toString() {
-        String format = "Task ID: %d, название: '%s', описание: '%s', статус: %s";
-        return String.format(format, id, title, description, status);
-    }
+  public void setStatus(Status status) {
+    this.status = status;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Task task = (Task) obj;
-        return Objects.equals(title, task.title) &&
-                Objects.equals(description, task.description) &&
-                (id == task.id) &&
-                Objects.equals(status, task.status);
-    }
+  @Override
+  public String toString() {
+    String format = "Task ID: %d, название: '%s', описание: '%s', статус: %s";
+    return String.format(format, id, title, description, status);
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, title, description, status);
-    }
+  @Override
+  public boolean equals(Object obj) {
+      if (this == obj) {
+          return true;
+      }
+      if (obj == null || getClass() != obj.getClass()) {
+          return false;
+      }
+    Task task = (Task) obj;
+    return Objects.equals(title, task.title) &&
+        Objects.equals(description, task.description) &&
+        (id == task.id) &&
+        Objects.equals(status, task.status);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, title, description, status);
+  }
 }
