@@ -7,7 +7,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import model.Epic;
 import model.Status;
 import model.Subtask;
@@ -16,7 +17,7 @@ import model.TypeTask;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
-  File file;
+  protected File file;
   private static final String SEPARATOR = ",";
   private static final String NEW_LINE = "\n";
 
@@ -75,23 +76,59 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     try {
       FileBackedTaskManager fileBackedTaskManager;
       fileBackedTaskManager = new FileBackedTaskManager(new InMemoryHistoryManager(), file);
-      List<String> allLines = Files.readAllLines(file.toPath());
-      for (String line : allLines) {
-        Task task = fromString(line);
-        TypeTask type = task.getType();
-        if (type.equals(TypeTask.TASK)) {
-          fileBackedTaskManager.tasks.put(task.getId(), task);
-        } else if (type.equals(TypeTask.EPIC) && task instanceof Epic epic) {
-          fileBackedTaskManager.epics.put(epic.getId(), epic);
-        } else if (type.equals(TypeTask.SUBTASK) && task instanceof Subtask subtask) {
-          fileBackedTaskManager.subtasks.put(subtask.getId(), subtask);
-        }
-      }
+      Set<String> allLines = new HashSet<>(Files.readAllLines(file.toPath()));
+      deserializeTasks(allLines, fileBackedTaskManager);
+      deserializeEpics(allLines, fileBackedTaskManager);
+      deserializeSubtasks(allLines, fileBackedTaskManager);
+
       return fileBackedTaskManager;
     } catch (IOException e) {
       String errorMessage = "Невозможно прочитать файл, ошибка: " + e.getMessage();
       System.out.println(errorMessage);
       throw new ManagerReadException(errorMessage);
+    }
+  }
+
+  private static void deserializeTasks(Set<String> allLines,
+      FileBackedTaskManager fileBackedTaskManager) {
+    for (String line : allLines) {
+      Task task = fromString(line);
+      if (task == null) {
+        continue;
+      }
+      TypeTask type = task.getType();
+      if (type.equals(TypeTask.TASK)) {
+        fileBackedTaskManager.tasks.put(task.getId(), task);
+      }
+    }
+  }
+
+  private static void deserializeEpics(Set<String> allLines,
+      FileBackedTaskManager fileBackedTaskManager) {
+    for (String line : allLines) {
+      Task task = fromString(line);
+      if (task == null) {
+        continue;
+      }
+      TypeTask type = task.getType();
+      if (type.equals(TypeTask.EPIC) && task instanceof Epic epic) {
+        fileBackedTaskManager.epics.put(epic.getId(), epic);
+      }
+    }
+  }
+
+  private static void deserializeSubtasks(Set<String> allLines,
+      FileBackedTaskManager fileBackedTaskManager) {
+    for (String line : allLines) {
+      Task task = fromString(line);
+      if (task == null) {
+        continue;
+      }
+      TypeTask type = task.getType();
+      if (type.equals(TypeTask.SUBTASK) && task instanceof Subtask subtask) {
+        fileBackedTaskManager.subtasks.put(subtask.getId(), subtask);
+        fileBackedTaskManager.epics.get(subtask.getEpicId()).getSubtaskIds().add(subtask.getId());
+      }
     }
   }
 
