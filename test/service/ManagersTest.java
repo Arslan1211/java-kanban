@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 class ManagersTest {
 
   @Test
-  void getDeafultManager() {
-    TaskManager actually = Managers.getDeafultManager();
+  void getDefaultManager() {
+    TaskManager actually = Managers.getDefaultManager();
     Assertions.assertInstanceOf(InMemoryTaskManager.class, actually);
   }
 

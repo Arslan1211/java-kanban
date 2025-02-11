@@ -77,58 +77,24 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
       FileBackedTaskManager fileBackedTaskManager;
       fileBackedTaskManager = new FileBackedTaskManager(new InMemoryHistoryManager(), file);
       Set<String> allLines = new HashSet<>(Files.readAllLines(file.toPath()));
-      deserializeTasks(allLines, fileBackedTaskManager);
-      deserializeEpics(allLines, fileBackedTaskManager);
-      deserializeSubtasks(allLines, fileBackedTaskManager);
-
+      for (String line : allLines) {
+        Task task = fromString(line);
+        assert task != null;
+        TypeTask type = task.getType();
+        if (type.equals(TypeTask.TASK)) {
+          fileBackedTaskManager.tasks.put(task.getId(), task);
+        } else if (type.equals(TypeTask.EPIC) && task instanceof Epic epic) {
+          fileBackedTaskManager.epics.put(epic.getId(), epic);
+        } else if (type.equals(TypeTask.SUBTASK) && task instanceof Subtask subtask) {
+          fileBackedTaskManager.subtasks.put(subtask.getId(), subtask);
+          fileBackedTaskManager.epics.get(subtask.getEpicId()).getSubtaskIds().add(subtask.getId());
+        }
+      }
       return fileBackedTaskManager;
     } catch (IOException e) {
       String errorMessage = "Невозможно прочитать файл, ошибка: " + e.getMessage();
       System.out.println(errorMessage);
       throw new ManagerReadException(errorMessage);
-    }
-  }
-
-  private static void deserializeTasks(Set<String> allLines,
-      FileBackedTaskManager fileBackedTaskManager) {
-    for (String line : allLines) {
-      Task task = fromString(line);
-      if (task == null) {
-        continue;
-      }
-      TypeTask type = task.getType();
-      if (type.equals(TypeTask.TASK)) {
-        fileBackedTaskManager.tasks.put(task.getId(), task);
-      }
-    }
-  }
-
-  private static void deserializeEpics(Set<String> allLines,
-      FileBackedTaskManager fileBackedTaskManager) {
-    for (String line : allLines) {
-      Task task = fromString(line);
-      if (task == null) {
-        continue;
-      }
-      TypeTask type = task.getType();
-      if (type.equals(TypeTask.EPIC) && task instanceof Epic epic) {
-        fileBackedTaskManager.epics.put(epic.getId(), epic);
-      }
-    }
-  }
-
-  private static void deserializeSubtasks(Set<String> allLines,
-      FileBackedTaskManager fileBackedTaskManager) {
-    for (String line : allLines) {
-      Task task = fromString(line);
-      if (task == null) {
-        continue;
-      }
-      TypeTask type = task.getType();
-      if (type.equals(TypeTask.SUBTASK) && task instanceof Subtask subtask) {
-        fileBackedTaskManager.subtasks.put(subtask.getId(), subtask);
-        fileBackedTaskManager.epics.get(subtask.getEpicId()).getSubtaskIds().add(subtask.getId());
-      }
     }
   }
 
