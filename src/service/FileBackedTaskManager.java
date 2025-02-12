@@ -80,7 +80,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
       for (String line : allLines) {
         Task task = fromString(line);
         assert task != null;
-        fileBackedTaskManager.id = Math.max(fileBackedTaskManager.id , task.getId());
+        fileBackedTaskManager.id = Math.max(fileBackedTaskManager.id, task.getId());
         TypeTask type = task.getType();
         if (type.equals(TypeTask.TASK)) {
           fileBackedTaskManager.tasks.put(task.getId(), task);
