@@ -80,6 +80,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
       for (String line : allLines) {
         Task task = fromString(line);
         assert task != null;
+        fileBackedTaskManager.id = Math.max(fileBackedTaskManager.id , task.getId());
         TypeTask type = task.getType();
         if (type.equals(TypeTask.TASK)) {
           fileBackedTaskManager.tasks.put(task.getId(), task);
@@ -87,6 +88,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
           fileBackedTaskManager.epics.put(epic.getId(), epic);
         } else if (type.equals(TypeTask.SUBTASK) && task instanceof Subtask subtask) {
           fileBackedTaskManager.subtasks.put(subtask.getId(), subtask);
+          if (fileBackedTaskManager.epics.get(subtask.getEpicId()) == null) {
+            continue;
+          }
           fileBackedTaskManager.epics.get(subtask.getEpicId()).getSubtaskIds().add(subtask.getId());
         }
       }
