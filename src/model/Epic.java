@@ -31,6 +31,11 @@ public class Epic extends Task {
   }
 
   @Override
+  public TypeTask getType() {
+    return TypeTask.EPIC;
+  }
+
+  @Override
   public String toString() {
     String format = "Epic ID: %d, название: '%s', описание: '%s', статус: %s";
     return String.format(format, super.getId(), super.getTitle(), super.getDescription(),
@@ -39,15 +44,15 @@ public class Epic extends Task {
 
   @Override
   public boolean equals(Object o) {
-      if (this == o) {
-          return true;
-      }
-      if (o == null || getClass() != o.getClass()) {
-          return false;
-      }
-      if (!super.equals(o)) {
-          return false;
-      }
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
     Epic epic = (Epic) o;
     return Objects.equals(subtaskIds, epic.subtaskIds);
   }

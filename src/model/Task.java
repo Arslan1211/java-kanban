@@ -54,6 +54,10 @@ public class Task {
     this.status = status;
   }
 
+  public TypeTask getType() {
+    return TypeTask.TASK;
+  }
+
   @Override
   public String toString() {
     String format = "Task ID: %d, название: '%s', описание: '%s', статус: %s";
@@ -62,12 +66,12 @@ public class Task {
 
   @Override
   public boolean equals(Object obj) {
-      if (this == obj) {
-          return true;
-      }
-      if (obj == null || getClass() != obj.getClass()) {
-          return false;
-      }
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
     Task task = (Task) obj;
     return Objects.equals(title, task.title) &&
         Objects.equals(description, task.description) &&
