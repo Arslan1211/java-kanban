@@ -10,41 +10,52 @@ import org.junit.jupiter.api.Test;
 
 public abstract class AbstractTaskManagerTest<T extends TaskManager> {
 
+  protected Task task;
+  protected Epic epic;
+  protected Subtask subtask;
   protected T manager;
-  protected static final int DEFAULT_ID = 1;
+  protected static final Integer DEFAULT_ID = 1;
 
   @Test
   void createTask() {
-    Task task = new Task("Заголовок задачи", "Описание задачи", Status.NEW);
+    task = new Task(DEFAULT_ID, "Заголовок задачи", "Описание задачи", Status.NEW);
     manager.createTask(task);
 
-    assertNotNull(task);
-    assertEquals("Заголовок задачи", task.getTitle());
-    assertEquals("Описание задачи", task.getDescription());
-    assertEquals(Status.NEW, task.getStatus());
+    Task checkEntity = manager.findTaskById(task.getId());
+
+    assertNotNull(checkEntity);
+    assertEquals("Заголовок задачи", checkEntity.getTitle());
+    assertEquals("Описание задачи", checkEntity.getDescription());
+    assertEquals(Status.NEW, checkEntity.getStatus());
   }
 
   @Test
   void createEpic() {
-    Epic epic = new Epic(DEFAULT_ID, "Заголовок эпика", "Описание эпика", Status.NEW);
+    epic = new Epic(DEFAULT_ID, "Заголовок эпика", "Описание эпика", Status.NEW);
     manager.createEpic(epic);
 
-    assertNotNull(epic);
-    assertEquals("Заголовок эпика", epic.getTitle());
-    assertEquals("Описание эпика", epic.getDescription());
-    assertEquals(Status.NEW, epic.getStatus());
+    Epic checkEntity = manager.findEpicById(epic.getId());
+
+    assertNotNull(checkEntity);
+    assertEquals("Заголовок эпика", checkEntity.getTitle());
+    assertEquals("Описание эпика", checkEntity.getDescription());
+    assertEquals(Status.NEW, checkEntity.getStatus());
   }
 
   @Test
   void createSubtask() {
-    Subtask subtask = new Subtask(DEFAULT_ID, "Заголовок подзадачи", "Описание подзадачи",
-        Status.NEW);
+    epic = new Epic(DEFAULT_ID, "Заголовок эпика", "Описание эпика", Status.NEW);
+    subtask = new Subtask(DEFAULT_ID, "Заголовок подзадачи", "Описание подзадачи",
+        Status.NEW, epic.getId());
+    manager.createEpic(epic);
     manager.createSubtask(subtask);
 
-    assertNotNull(subtask);
-    assertEquals("Заголовок подзадачи", subtask.getTitle());
-    assertEquals("Описание подзадачи", subtask.getDescription());
-    assertEquals(Status.NEW, subtask.getStatus());
+    Subtask checkEntity = manager.findSubtaskById(subtask.getId());
+
+    assertNotNull(checkEntity);
+    assertEquals("Заголовок подзадачи", checkEntity.getTitle());
+    assertEquals("Описание подзадачи", checkEntity.getDescription());
+    assertEquals(Status.NEW, checkEntity.getStatus());
   }
 
   @Test
@@ -52,18 +63,19 @@ public abstract class AbstractTaskManagerTest<T extends TaskManager> {
     final String name = "Новая задача";
     final String description = "Подробное описание";
     final Status status = Status.DONE;
-    Task task = new Task("Заголовок задачи", "Описание задачи", Status.NEW);
+    task = new Task("Заголовок задачи", "Описание задачи", Status.NEW);
     manager.createTask(task);
     task.setTitle(name);
     task.setDescription(description);
     task.setStatus(status);
 
+    Task checkEntity = manager.updateTask(task);
     manager.updateTask(task);
 
-    assertNotNull(task);
-    assertEquals(name, task.getTitle());
-    assertEquals(description, task.getDescription());
-    assertEquals(Status.DONE, task.getStatus());
+    assertNotNull(checkEntity);
+    assertEquals(name, checkEntity.getTitle());
+    assertEquals(description, checkEntity.getDescription());
+    assertEquals(Status.DONE, checkEntity.getStatus());
   }
 
   @Test
@@ -71,18 +83,19 @@ public abstract class AbstractTaskManagerTest<T extends TaskManager> {
     final String name = "Новый эпик";
     final String description = "Подробное описание";
     final Status status = Status.DONE;
-    Epic epic = new Epic(DEFAULT_ID, "Заголовок эпика", "Описание эпика", Status.NEW);
+    epic = new Epic(DEFAULT_ID, "Заголовок эпика", "Описание эпика", Status.NEW);
     manager.createEpic(epic);
     epic.setTitle(name);
     epic.setDescription(description);
     epic.setStatus(status);
 
+    Epic checkEntity = manager.updateEpic(epic);
     manager.updateEpic(epic);
 
-    assertNotNull(epic);
-    assertEquals(name, epic.getTitle());
-    assertEquals(description, epic.getDescription());
-    assertEquals(Status.DONE, epic.getStatus());
+    assertNotNull(checkEntity);
+    assertEquals(name, checkEntity.getTitle());
+    assertEquals(description, checkEntity.getDescription());
+    assertEquals(Status.DONE, checkEntity.getStatus());
   }
 
   @Test
@@ -90,52 +103,62 @@ public abstract class AbstractTaskManagerTest<T extends TaskManager> {
     final String name = "Новая подзадача";
     final String description = "Подробное описание";
     final Status status = Status.DONE;
-    Subtask subtask = new Subtask(DEFAULT_ID, "Заголовок подзадачи", "Описание подзадачи",
-        Status.NEW);
+    epic = new Epic(DEFAULT_ID, "Заголовок эпика", "Описание эпика", Status.NEW);
+    subtask = new Subtask(DEFAULT_ID, "Заголовок подзадачи", "Описание подзадачи",
+        Status.NEW, epic.getId());
+    manager.createEpic(epic);
     manager.createSubtask(subtask);
     subtask.setTitle(name);
     subtask.setDescription(description);
     subtask.setStatus(status);
 
+    Subtask checkEntity = manager.updateSubtask(subtask);
     manager.updateSubtask(subtask);
 
-    assertNotNull(subtask);
-    assertEquals(name, subtask.getTitle());
-    assertEquals(description, subtask.getDescription());
-    assertEquals(Status.DONE, subtask.getStatus());
+    assertNotNull(checkEntity);
+    assertEquals(name, checkEntity.getTitle());
+    assertEquals(description, checkEntity.getDescription());
+    assertEquals(Status.DONE, checkEntity.getStatus());
+    assertEquals(epic.getId(), checkEntity.getEpicId());
   }
 
   @Test
   void deleteTaskById() {
-    Task task = new Task("Заголовок задачи", "Описание задачи", Status.NEW);
+    task = new Task("Заголовок задачи", "Описание задачи", Status.NEW);
     manager.createTask(task);
 
     manager.deleteTaskById(task.getId());
 
     assertFalse(manager.findAllTasks().contains(task));
+    assertEquals(0, manager.findAllTasks().size());
+    assertTrue(manager.findAllTasks().isEmpty());
   }
 
   @Test
   void deleteEpicById() {
-    Epic epic = new Epic(DEFAULT_ID, "Заголовок эпика", "Описание эпика", Status.NEW);
+    epic = new Epic(DEFAULT_ID, "Заголовок эпика", "Описание эпика", Status.NEW);
     manager.createEpic(epic);
 
     manager.deleteEpicById(epic.getId());
 
     assertFalse(manager.findAllEpics().contains(epic));
+    assertEquals(0, manager.findAllEpics().size());
+    assertTrue(manager.findAllEpics().isEmpty());
   }
 
   @Test
   void deleteSubtaskById() {
-    Epic epic = new Epic(DEFAULT_ID, "Заголовок эпика", "Описание эпика", Status.NEW);
+    epic = new Epic(DEFAULT_ID, "Заголовок эпика", "Описание эпика", Status.NEW);
     manager.createEpic(epic);
-    Subtask subtask = new Subtask(DEFAULT_ID, epic.getId(), "Заголовок подзадачи",
+    subtask = new Subtask(DEFAULT_ID, epic.getId(), "Заголовок подзадачи",
         "Описание подзадачи", Status.NEW);
     manager.createSubtask(subtask);
 
     manager.deleteSubtaskById(subtask.getId());
 
     assertFalse(manager.findAllSubtasks().contains(subtask));
+    assertEquals(0, manager.findAllSubtasks().size());
+    assertTrue(manager.findAllSubtasks().isEmpty());
   }
 
   @Test

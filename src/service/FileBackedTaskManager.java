@@ -27,23 +27,21 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
   }
 
   private void save() {
+
     Collection<Task> allTasks = findAllTasks();
-    for (Task task : allTasks) {
-      String taskAsString = taskToString(task);
-      writeStringToFile(taskAsString);
-    }
+    allTasks.stream()
+        .map(this::taskToString)
+        .forEach(this::writeStringToFile);
 
     Collection<Epic> allEpics = findAllEpics();
-    for (Epic epic : allEpics) {
-      String epicAsString = taskToString(epic);
-      writeStringToFile(epicAsString);
-    }
+    allEpics.stream()
+        .map(this::taskToString)
+        .forEach(this::writeStringToFile);
 
-    Collection<Subtask> allSubtask = findAllSubtasks();
-    for (Subtask subtask : allSubtask) {
-      String subtaskAsString = taskToString(subtask);
-      writeStringToFile(subtaskAsString);
-    }
+    Collection<Subtask> allSubtasks = findAllSubtasks();
+    allSubtasks.stream()
+        .map(this::taskToString)
+        .forEach(this::writeStringToFile);
   }
 
   private void writeStringToFile(String taskAsString) {
