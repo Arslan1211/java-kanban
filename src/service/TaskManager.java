@@ -1,5 +1,6 @@
 package service;
 
+import java.util.TreeSet;
 import model.Epic;
 import model.Subtask;
 import model.Task;
@@ -48,4 +49,6 @@ public interface TaskManager {
   void deleteAllEpics();
 
   void deleteAllSubtasks();
+
+  TreeSet<Task> getPrioritizedTasks();
 }

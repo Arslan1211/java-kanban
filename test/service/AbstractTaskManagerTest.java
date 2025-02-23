@@ -2,6 +2,8 @@ package service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.Duration;
+import java.time.Instant;
 import model.Epic;
 import model.Status;
 import model.Subtask;
@@ -15,10 +17,17 @@ public abstract class AbstractTaskManagerTest<T extends TaskManager> {
   protected Subtask subtask;
   protected T manager;
   protected static final Integer DEFAULT_ID = 1;
+  Instant startTime = Instant.parse("2025-02-23T14:05:00Z");
 
   @Test
   void createTask() {
-    task = new Task(DEFAULT_ID, "Заголовок задачи", "Описание задачи", Status.NEW);
+    task = new Task(
+        DEFAULT_ID,
+        "Заголовок задачи",
+        "Описание задачи",
+        Status.NEW,
+        startTime,
+        Duration.ofMinutes(15));
     manager.createTask(task);
 
     Task checkEntity = manager.findTaskById(task.getId());
@@ -31,7 +40,13 @@ public abstract class AbstractTaskManagerTest<T extends TaskManager> {
 
   @Test
   void createEpic() {
-    epic = new Epic(DEFAULT_ID, "Заголовок эпика", "Описание эпика", Status.NEW);
+    epic = new Epic(
+        DEFAULT_ID,
+        "Заголовок эпика",
+        "Описание эпика",
+        Status.NEW,
+        startTime,
+        Duration.ofMinutes(15));
     manager.createEpic(epic);
 
     Epic checkEntity = manager.findEpicById(epic.getId());
@@ -44,9 +59,22 @@ public abstract class AbstractTaskManagerTest<T extends TaskManager> {
 
   @Test
   void createSubtask() {
-    epic = new Epic(DEFAULT_ID, "Заголовок эпика", "Описание эпика", Status.NEW);
-    subtask = new Subtask(DEFAULT_ID, "Заголовок подзадачи", "Описание подзадачи",
-        Status.NEW, epic.getId());
+    epic = new Epic(
+        DEFAULT_ID,
+        "Заголовок эпика",
+        "Описание эпика",
+        Status.NEW,
+        startTime,
+        Duration.ofMinutes(15)
+    );
+    subtask = new Subtask(DEFAULT_ID,
+        "Заголовок подзадачи",
+        "Описание подзадачи",
+        Status.NEW,
+        epic.getId(),
+        startTime,
+        Duration.ofMinutes(15)
+    );
     manager.createEpic(epic);
     manager.createSubtask(subtask);
 
@@ -63,7 +91,13 @@ public abstract class AbstractTaskManagerTest<T extends TaskManager> {
     final String name = "Новая задача";
     final String description = "Подробное описание";
     final Status status = Status.DONE;
-    task = new Task("Заголовок задачи", "Описание задачи", Status.NEW);
+    task = new Task(DEFAULT_ID,
+        "Заголовок задачи",
+        "Описание задачи",
+        Status.NEW,
+        startTime,
+        Duration.ofMinutes(15)
+    );
     manager.createTask(task);
     task.setTitle(name);
     task.setDescription(description);
@@ -83,7 +117,13 @@ public abstract class AbstractTaskManagerTest<T extends TaskManager> {
     final String name = "Новый эпик";
     final String description = "Подробное описание";
     final Status status = Status.DONE;
-    epic = new Epic(DEFAULT_ID, "Заголовок эпика", "Описание эпика", Status.NEW);
+    epic = new Epic(DEFAULT_ID,
+        "Заголовок эпика",
+        "Описание эпика",
+        Status.NEW,
+        startTime,
+        Duration.ofMinutes(15)
+    );
     manager.createEpic(epic);
     epic.setTitle(name);
     epic.setDescription(description);
@@ -103,9 +143,22 @@ public abstract class AbstractTaskManagerTest<T extends TaskManager> {
     final String name = "Новая подзадача";
     final String description = "Подробное описание";
     final Status status = Status.DONE;
-    epic = new Epic(DEFAULT_ID, "Заголовок эпика", "Описание эпика", Status.NEW);
-    subtask = new Subtask(DEFAULT_ID, "Заголовок подзадачи", "Описание подзадачи",
-        Status.NEW, epic.getId());
+    epic = new Epic(
+        DEFAULT_ID,
+        "Заголовок эпика",
+        "Описание эпика",
+        Status.NEW,
+        startTime,
+        Duration.ofMinutes(15)
+    );
+    subtask = new Subtask(DEFAULT_ID,
+        "Заголовок подзадачи",
+        "Описание подзадачи",
+        Status.NEW,
+        epic.getId(),
+        startTime,
+        Duration.ofMinutes(15)
+    );
     manager.createEpic(epic);
     manager.createSubtask(subtask);
     subtask.setTitle(name);
@@ -124,7 +177,14 @@ public abstract class AbstractTaskManagerTest<T extends TaskManager> {
 
   @Test
   void deleteTaskById() {
-    task = new Task("Заголовок задачи", "Описание задачи", Status.NEW);
+    task = new Task(
+        DEFAULT_ID,
+        "Заголовок задачи",
+        "Описание задачи",
+        Status.NEW,
+        startTime,
+        Duration.ofMinutes(15)
+    );
     manager.createTask(task);
 
     manager.deleteTaskById(task.getId());
@@ -136,7 +196,14 @@ public abstract class AbstractTaskManagerTest<T extends TaskManager> {
 
   @Test
   void deleteEpicById() {
-    epic = new Epic(DEFAULT_ID, "Заголовок эпика", "Описание эпика", Status.NEW);
+    epic = new Epic(
+        DEFAULT_ID,
+        "Заголовок эпика",
+        "Описание эпика",
+        Status.NEW,
+        startTime,
+        Duration.ofMinutes(15)
+    );
     manager.createEpic(epic);
 
     manager.deleteEpicById(epic.getId());
@@ -148,10 +215,24 @@ public abstract class AbstractTaskManagerTest<T extends TaskManager> {
 
   @Test
   void deleteSubtaskById() {
-    epic = new Epic(DEFAULT_ID, "Заголовок эпика", "Описание эпика", Status.NEW);
+    epic = new Epic(
+        DEFAULT_ID,
+        "Заголовок эпика",
+        "Описание эпика",
+        Status.NEW,
+        startTime,
+        Duration.ofMinutes(15)
+    );
     manager.createEpic(epic);
-    subtask = new Subtask(DEFAULT_ID, epic.getId(), "Заголовок подзадачи",
-        "Описание подзадачи", Status.NEW);
+    subtask = new Subtask(
+        DEFAULT_ID,
+        "Заголовок подзадачи",
+        "Описание подзадачи",
+        Status.NEW,
+        epic.getId(),
+        startTime,
+        Duration.ofMinutes(15)
+    );
     manager.createSubtask(subtask);
 
     manager.deleteSubtaskById(subtask.getId());
@@ -163,9 +244,30 @@ public abstract class AbstractTaskManagerTest<T extends TaskManager> {
 
   @Test
   void deleteAllTasks() {
-    Task task1 = new Task("Заголовок задачи 1", "Описание задачи", Status.NEW);
-    Task task2 = new Task("Заголовок задачи 2", "Описание задачи", Status.NEW);
-    Task task3 = new Task("Заголовок задачи 3", "Описание задачи", Status.NEW);
+    Task task1 = new Task(
+        DEFAULT_ID,
+        "Заголовок задачи 1",
+        "Описание задачи",
+        Status.NEW,
+        startTime,
+        Duration.ofMinutes(15)
+    );
+    Task task2 = new Task(
+        DEFAULT_ID,
+        "Заголовок задачи 1",
+        "Описание задачи",
+        Status.NEW,
+        startTime,
+        Duration.ofMinutes(15)
+    );
+    Task task3 = new Task(
+        DEFAULT_ID,
+        "Заголовок задачи 1",
+        "Описание задачи",
+        Status.NEW,
+        startTime,
+        Duration.ofMinutes(15)
+    );
     manager.createTask(task1);
     manager.createTask(task2);
     manager.createTask(task3);
@@ -177,9 +279,30 @@ public abstract class AbstractTaskManagerTest<T extends TaskManager> {
 
   @Test
   void deleteAllEpics() {
-    Epic epic1 = new Epic(DEFAULT_ID, "Заголовок эпика 1", "Описание эпика", Status.NEW);
-    Epic epic2 = new Epic(DEFAULT_ID, "Заголовок эпика 2", "Описание эпика", Status.NEW);
-    Epic epic3 = new Epic(DEFAULT_ID, "Заголовок эпика 3", "Описание эпика", Status.NEW);
+    Epic epic1 = new Epic(
+        DEFAULT_ID,
+        "Заголовок эпика 1",
+        "Описание эпика",
+        Status.NEW,
+        startTime,
+        Duration.ofMinutes(15)
+    );
+    Epic epic2 = new Epic(
+        DEFAULT_ID,
+        "Заголовок эпика 1",
+        "Описание эпика",
+        Status.NEW,
+        startTime,
+        Duration.ofMinutes(15)
+    );
+    Epic epic3 = new Epic(
+        DEFAULT_ID,
+        "Заголовок эпика 1",
+        "Описание эпика",
+        Status.NEW,
+        startTime,
+        Duration.ofMinutes(15)
+    );
     manager.createEpic(epic1);
     manager.createEpic(epic2);
     manager.createEpic(epic3);
@@ -191,18 +314,60 @@ public abstract class AbstractTaskManagerTest<T extends TaskManager> {
 
   @Test
   void deleteAllSubtasks() {
-    Epic epic1 = new Epic(DEFAULT_ID, "Заголовок эпика 1", "Описание эпика", Status.NEW);
-    Epic epic2 = new Epic(DEFAULT_ID, "Заголовок эпика 2", "Описание эпика", Status.NEW);
-    Epic epic3 = new Epic(DEFAULT_ID, "Заголовок эпика 3", "Описание эпика", Status.NEW);
+    Epic epic1 = new Epic(
+        DEFAULT_ID,
+        "Заголовок эпика 1",
+        "Описание эпика",
+        Status.NEW,
+        startTime,
+        Duration.ofMinutes(15)
+    );
+    Epic epic2 = new Epic(
+        DEFAULT_ID,
+        "Заголовок эпика 1",
+        "Описание эпика",
+        Status.NEW,
+        startTime,
+        Duration.ofMinutes(15)
+    );
+    Epic epic3 = new Epic(
+        DEFAULT_ID,
+        "Заголовок эпика 1",
+        "Описание эпика",
+        Status.NEW,
+        startTime,
+        Duration.ofMinutes(15)
+    );
     manager.createEpic(epic1);
     manager.createEpic(epic2);
-    manager.createEpic(epic2);
-    Subtask subtask1 = new Subtask(DEFAULT_ID, epic1.getId(), "Заголовок подзадачи",
-        "Описание подзадачи", Status.NEW);
-    Subtask subtask2 = new Subtask(DEFAULT_ID, epic2.getId(), "Заголовок подзадачи",
-        "Описание подзадачи", Status.NEW);
-    Subtask subtask3 = new Subtask(DEFAULT_ID, epic3.getId(), "Заголовок подзадачи",
-        "Описание подзадачи", Status.NEW);
+    manager.createEpic(epic3);
+    Subtask subtask1 = new Subtask(
+        DEFAULT_ID,
+        "Заголовок подзадачи",
+        "Описание подзадачи",
+        Status.NEW,
+        epic1.getId(),
+        startTime,
+        Duration.ofMinutes(15)
+    );
+    Subtask subtask2 = new Subtask(
+        DEFAULT_ID,
+        "Заголовок подзадачи",
+        "Описание подзадачи",
+        Status.NEW,
+        epic1.getId(),
+        startTime,
+        Duration.ofMinutes(15)
+    );
+    Subtask subtask3 = new Subtask(
+        DEFAULT_ID,
+        "Заголовок подзадачи",
+        "Описание подзадачи",
+        Status.NEW,
+        epic1.getId(),
+        startTime,
+        Duration.ofMinutes(15)
+    );
     manager.createSubtask(subtask1);
     manager.createSubtask(subtask2);
     manager.createSubtask(subtask3);

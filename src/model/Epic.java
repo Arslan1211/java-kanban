@@ -1,21 +1,29 @@
 package model;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
 public class Epic extends Task {
 
-  private final Collection<Integer> subtaskIds;
+  private Instant endTime;
 
-  public Epic(String title, String description) {
-    super(title, description, Status.NEW);
-    subtaskIds = new ArrayList<>();
-  }
+  private final Collection<Integer> subtaskIds;
 
   public Epic(int id, String title, String description, Status status) {
     super(id, title, description, status);
     subtaskIds = new ArrayList<>();
+  }
+
+  public Epic(int id, String title, String description, Status status, Instant startTime,
+      Duration duration) {
+    super(id, title, description, status, startTime, duration);
+    subtaskIds = new ArrayList<>();
+    //this.endTime = getEndTime();
   }
 
   public Collection<Integer> getSubtaskIds() {
@@ -37,9 +45,18 @@ public class Epic extends Task {
 
   @Override
   public String toString() {
-    String format = "Epic ID: %d, название: '%s', описание: '%s', статус: %s";
-    return String.format(format, super.getId(), super.getTitle(), super.getDescription(),
-        super.getStatus());
+    return "Epic{" +
+        "id=" + getId() +
+        ", name=" + getTitle() +
+        ", description=" + getDescription() +
+        ", status=" + getStatus() +
+        ", startTime=" + ZonedDateTime.ofInstant(getStartTime(), ZoneId.systemDefault())
+        .format(formatter) +
+        ", duration=" + getDuration().toMinutes() +
+        ", endTime=" + ZonedDateTime.ofInstant(getStartTime().plus(getDuration()),
+            ZoneId.systemDefault())
+        .format(formatter) +
+        '}';
   }
 
   @Override
@@ -60,5 +77,14 @@ public class Epic extends Task {
   @Override
   public int hashCode() {
     return Objects.hash(super.hashCode(), subtaskIds);
+  }
+
+  @Override
+  public Instant getEndTime() {
+    return endTime;
+  }
+
+  public void setEndTime(Instant endTime) {
+    this.endTime = endTime;
   }
 }
