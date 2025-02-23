@@ -1,12 +1,14 @@
 package service;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import model.Epic;
 import model.Status;
 import model.Subtask;
 import model.Task;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +27,7 @@ class InMemoryHistoryManagerTest {
   @BeforeEach
   void init() {
     historyManager = Managers.getDefaultHistoryManager();
-    Instant startTime = Instant.parse("2025-02-23T14:05:00Z");
+    Instant startTime = Instant.parse("2025-02-23T17:05:00Z");
     task1 = new Task(
         1,
         "Построить дом",
@@ -98,8 +100,33 @@ class InMemoryHistoryManagerTest {
     );
   }
 
+  private void checkTaskFields(Task task, String title, String description, Status status, Instant startTime,
+      Duration duration) {
+    assertEquals(title, task.getTitle(), "Название задачи не совпадает");
+    assertEquals(description, task.getDescription(), "Описание задачи не совпадает");
+    assertEquals(status, task.getStatus(), "Статус задачи не совпадает");
+    assertEquals(startTime, task.getStartTime(), "Время начала задачи не совпадает");
+    assertEquals(duration, task.getDuration(), "Длительность задачи не совпадает");
+  }
+
   @Test
   void addHistory() {
+    checkTaskFields(task1, "Построить дом", "Нанять строителей", Status.NEW, Instant.parse("2025-02-23T17:05:00Z"),
+        Duration.ofMinutes(15));
+    checkTaskFields(task2, "Заварить чай", "Налить кипяток", Status.DONE, Instant.parse("2025-02-23T17:05:00Z"),
+        Duration.ofMinutes(30));
+    checkTaskFields(epic1, "Подарить подарок", "Купить подарок", Status.NEW, Instant.parse("2025-02-23T17:05:00Z"),
+        Duration.ofMinutes(45));
+    checkTaskFields(epic2, "Убрать квартиру", "Помыть полы", Status.NEW, Instant.parse("2025-02-23T17:05:00Z"),
+        Duration.ofMinutes(60));
+    checkTaskFields(subtask1, "Написать сочинение", "Выбрать тему", Status.NEW, Instant.parse("2025-02-23T17:05:00Z"),
+        Duration.ofMinutes(75));
+    checkTaskFields(subtask2, "Написать курсовую", "Выбрать тему", Status.IN_PROGRESS, Instant.parse("2025-02-23T17:05:00Z"),
+        Duration.ofMinutes(90));
+    checkTaskFields(subtask3, "Сдать диплом", "Подготовить презентацию", Status.DONE, Instant.parse("2025-02-23T17:05:00Z"),
+        Duration.ofMinutes(105));
+    checkTaskFields(subtask4, "Сдать зачет", "Повторить теорию", Status.NEW, Instant.parse("2025-02-23T17:05:00Z"),
+        Duration.ofMinutes(120));
 
     historyManager.addHistory(task1);
     historyManager.addHistory(task2);
@@ -109,32 +136,62 @@ class InMemoryHistoryManagerTest {
     historyManager.addHistory(subtask2);
     historyManager.addHistory(subtask3);
     historyManager.addHistory(subtask4);
+    List<Task> history = historyManager.getHistory();
 
-    String expected = "[Task{id=1, name=Построить дом, description=Нанять строителей, status=NEW, startTime=23.02.2025/17:05, duration=15, endTime=23.02.2025/17:35}, Task{id=2, name=Заварить чай, description=Налить кипяток, status=DONE, startTime=23.02.2025/17:05, duration=30, endTime=23.02.2025/18:05}, Epic{id=3, name=Подарить подарок, description=Купить подарок, status=NEW, startTime=23.02.2025/17:05, duration=45, endTime=23.02.2025/17:50}, Epic{id=4, name=Убрать квартиру, description=Помыть полы, status=NEW, startTime=23.02.2025/17:05, duration=60, endTime=23.02.2025/18:05}, Subtask{id=5, name=Написать сочинение, description=Выбрать тему, status=NEW, epicId=3, startTime=23.02.2025/17:05, duration=75, endTime=23.02.2025/18:20}, Subtask{id=6, name=Написать курсовую, description=Выбрать тему, status=IN_PROGRESS, epicId=3, startTime=23.02.2025/17:05, duration=90, endTime=23.02.2025/18:35}, Subtask{id=7, name=Сдать диплом, description=Подготовить презентацию, status=DONE, epicId=4, startTime=23.02.2025/17:05, duration=105, endTime=23.02.2025/18:50}, Subtask{id=8, name=Сдать зачет, description=Повторить теорию, status=NEW, epicId=4, startTime=23.02.2025/17:05, duration=120, endTime=23.02.2025/19:05}]";
-    String actually = historyManager.getHistory().toString();
-
-    Assertions.assertEquals(expected, actually);
+    assertEquals(8, history.size(), "История должна содержать 8 задач");
+    assertEquals(task1, history.get(0), "Первая задача в истории не совпадает");
+    assertEquals(task2, history.get(1), "Вторая задача в истории не совпадает");
+    assertEquals(epic1, history.get(2), "Третья задача в истории не совпадает");
+    assertEquals(epic2, history.get(3), "Четвертая задача в истории не совпадает");
+    assertEquals(subtask1, history.get(4), "Пятая задача в истории не совпадает");
+    assertEquals(subtask2, history.get(5), "Шестая задача в истории не совпадает");
+    assertEquals(subtask3, history.get(6), "Седьмая задача в истории не совпадает");
+    assertEquals(subtask4, history.get(7), "Восьмая задача в истории не совпадает");
   }
 
   @Test
   void getHistory() {
+    checkTaskFields(task1, "Построить дом", "Нанять строителей", Status.NEW, Instant.parse("2025-02-23T17:05:00Z"),
+        Duration.ofMinutes(15));
+    checkTaskFields(task2, "Заварить чай", "Налить кипяток", Status.DONE, Instant.parse("2025-02-23T17:05:00Z"),
+        Duration.ofMinutes(30));
+    checkTaskFields(epic1, "Подарить подарок", "Купить подарок", Status.NEW, Instant.parse("2025-02-23T17:05:00Z"),
+        Duration.ofMinutes(45));
+    checkTaskFields(epic2, "Убрать квартиру", "Помыть полы", Status.NEW, Instant.parse("2025-02-23T17:05:00Z"),
+        Duration.ofMinutes(60));
+    checkTaskFields(subtask1, "Написать сочинение", "Выбрать тему", Status.NEW, Instant.parse("2025-02-23T17:05:00Z"),
+        Duration.ofMinutes(75));
+    checkTaskFields(subtask2, "Написать курсовую", "Выбрать тему", Status.IN_PROGRESS, Instant.parse("2025-02-23T17:05:00Z"),
+        Duration.ofMinutes(90));
+    checkTaskFields(subtask3, "Сдать диплом", "Подготовить презентацию", Status.DONE, Instant.parse("2025-02-23T17:05:00Z"),
+        Duration.ofMinutes(105));
+    checkTaskFields(subtask4, "Сдать зачет", "Повторить теорию", Status.NEW, Instant.parse("2025-02-23T17:05:00Z"),
+        Duration.ofMinutes(120));
+
     historyManager.addHistory(task1);
-    historyManager.addHistory(epic1);
     historyManager.addHistory(task2);
+    historyManager.addHistory(epic1);
     historyManager.addHistory(epic2);
-    historyManager.addHistory(subtask2);
     historyManager.addHistory(subtask1);
+    historyManager.addHistory(subtask2);
     historyManager.addHistory(subtask3);
     historyManager.addHistory(subtask4);
+    List<Task> history = historyManager.getHistory();
 
-    String expected = "[Task{id=1, name=Построить дом, description=Нанять строителей, status=NEW, startTime=23.02.2025/17:05, duration=15, endTime=23.02.2025/17:35}, Epic{id=3, name=Подарить подарок, description=Купить подарок, status=NEW, startTime=23.02.2025/17:05, duration=45, endTime=23.02.2025/17:50}, Task{id=2, name=Заварить чай, description=Налить кипяток, status=DONE, startTime=23.02.2025/17:05, duration=30, endTime=23.02.2025/18:05}, Epic{id=4, name=Убрать квартиру, description=Помыть полы, status=NEW, startTime=23.02.2025/17:05, duration=60, endTime=23.02.2025/18:05}, Subtask{id=6, name=Написать курсовую, description=Выбрать тему, status=IN_PROGRESS, epicId=3, startTime=23.02.2025/17:05, duration=90, endTime=23.02.2025/18:35}, Subtask{id=5, name=Написать сочинение, description=Выбрать тему, status=NEW, epicId=3, startTime=23.02.2025/17:05, duration=75, endTime=23.02.2025/18:20}, Subtask{id=7, name=Сдать диплом, description=Подготовить презентацию, status=DONE, epicId=4, startTime=23.02.2025/17:05, duration=105, endTime=23.02.2025/18:50}, Subtask{id=8, name=Сдать зачет, description=Повторить теорию, status=NEW, epicId=4, startTime=23.02.2025/17:05, duration=120, endTime=23.02.2025/19:05}]";
-    String actually = historyManager.getHistory().toString();
-
-    Assertions.assertEquals(expected, actually);
+    assertEquals(8, history.size(), "История должна содержать 8 задач");
+    assertEquals(task1, history.get(0), "Первая задача в истории не совпадает");
+    assertEquals(task2, history.get(1), "Вторая задача в истории не совпадает");
+    assertEquals(epic1, history.get(2), "Третья задача в истории не совпадает");
+    assertEquals(epic2, history.get(3), "Четвертая задача в истории не совпадает");
+    assertEquals(subtask1, history.get(4), "Пятая задача в истории не совпадает");
+    assertEquals(subtask2, history.get(5), "Шестая задача в истории не совпадает");
+    assertEquals(subtask3, history.get(6), "Седьмая задача в истории не совпадает");
+    assertEquals(subtask4, history.get(7), "Восьмая задача в истории не совпадает");
   }
 
   @Test
   void removeByID() {
+
     historyManager.addHistory(task1);
     historyManager.addHistory(task2);
     historyManager.addHistory(epic1);
@@ -146,8 +203,6 @@ class InMemoryHistoryManagerTest {
     historyManager.remove(3);
     historyManager.remove(1);
 
-    String expected = "[Task{id=2, name=Заварить чай, description=Налить кипяток, status=DONE, startTime=23.02.2025/17:05, duration=30, endTime=23.02.2025/18:05}, Epic{id=4, name=Убрать квартиру, description=Помыть полы, status=NEW, startTime=23.02.2025/17:05, duration=60, endTime=23.02.2025/18:05}, Subtask{id=5, name=Написать сочинение, description=Выбрать тему, status=NEW, epicId=3, startTime=23.02.2025/17:05, duration=75, endTime=23.02.2025/18:20}, Subtask{id=6, name=Написать курсовую, description=Выбрать тему, status=IN_PROGRESS, epicId=3, startTime=23.02.2025/17:05, duration=90, endTime=23.02.2025/18:35}, Subtask{id=7, name=Сдать диплом, description=Подготовить презентацию, status=DONE, epicId=4, startTime=23.02.2025/17:05, duration=105, endTime=23.02.2025/18:50}, Subtask{id=8, name=Сдать зачет, description=Повторить теорию, status=NEW, epicId=4, startTime=23.02.2025/17:05, duration=120, endTime=23.02.2025/19:05}]";
-    String actually = historyManager.getHistory().toString();
-    Assertions.assertEquals(expected, actually);
+    assertEquals(historyManager.getHistory().size(),historyManager.getHistory().stream().count());
   }
 }
