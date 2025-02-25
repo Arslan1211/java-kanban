@@ -16,8 +16,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import model.Epic;
@@ -52,21 +54,21 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
    * Сохраняет все задачи, эпики и подзадачи в файл.
    */
   private void save() {
+    String taskAsString = "type, id, name, description, status, links, start_time, duration, [end_time,]\n";
 
     Collection<Task> allTasks = findAllTasks();
-    allTasks.stream()
-        .map(this::taskToString)
-        .forEach(this::writeStringToFile);
-
+    for (Task task : allTasks) {
+      taskAsString = taskToString(task);
+    }
     Collection<Epic> allEpics = findAllEpics();
-    allEpics.stream()
-        .map(this::taskToString)
-        .forEach(this::writeStringToFile);
-
-    Collection<Subtask> allSubtasks = findAllSubtasks();
-    allSubtasks.stream()
-        .map(this::taskToString)
-        .forEach(this::writeStringToFile);
+    for (Epic epic : allEpics) {
+      taskAsString = taskToString(epic);
+    }
+    Collection<Subtask> allSubtask = findAllSubtasks();
+    for (Subtask subtask : allSubtask) {
+      taskAsString = taskToString(subtask);
+    }
+    writeStringToFile(taskAsString);
   }
 
   /**
@@ -129,22 +131,28 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
           new InMemoryHistoryManager(), file);
       Set<String> allLines = new HashSet<>(Files.readAllLines(file.toPath()));
 
+      List<Task> allTasks = new ArrayList<>();
+
       allLines.stream().filter(line -> line != null && !line.trim().isEmpty())
           .map(FileBackedTaskManager::fromString).filter(Objects::nonNull).forEach(task -> {
             fileBackedTaskManager.id = Math.max(fileBackedTaskManager.id, task.getId());
             TypeTask type = task.getType();
             if (type.equals(TASK)) {
               fileBackedTaskManager.tasks.put(task.getId(), task);
+              allTasks.add(task);
             } else if (type.equals(EPIC) && task instanceof Epic epic) {
               fileBackedTaskManager.epics.put(epic.getId(), epic);
+              allTasks.add(epic);
             } else if (type.equals(SUBTASK) && task instanceof Subtask subtask) {
               fileBackedTaskManager.subtasks.put(subtask.getId(), subtask);
+              allTasks.add(subtask);
               if (fileBackedTaskManager.epics.get(subtask.getEpicId()) != null) {
                 fileBackedTaskManager.epics.get(subtask.getEpicId()).getSubtaskIds()
                     .add(subtask.getId());
               }
             }
           });
+
       return fileBackedTaskManager;
     } catch (IOException e) {
       String errorMessage = "Невозможно прочитать файл, ошибка: " + e.getMessage();
