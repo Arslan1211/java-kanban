@@ -100,7 +100,8 @@ class InMemoryHistoryManagerTest {
     );
   }
 
-  private void checkTaskFields(Task task, String title, String description, Status status, Instant startTime,
+  private void checkTaskFields(Task task, String title, String description, Status status,
+      Instant startTime,
       Duration duration) {
     assertEquals(title, task.getTitle(), "Название задачи не совпадает");
     assertEquals(description, task.getDescription(), "Описание задачи не совпадает");
@@ -111,21 +112,29 @@ class InMemoryHistoryManagerTest {
 
   @Test
   void addHistory() {
-    checkTaskFields(task1, "Построить дом", "Нанять строителей", Status.NEW, Instant.parse("2025-02-23T17:05:00Z"),
+    checkTaskFields(task1, "Построить дом", "Нанять строителей", Status.NEW,
+        Instant.parse("2025-02-23T17:05:00Z"),
         Duration.ofMinutes(15));
-    checkTaskFields(task2, "Заварить чай", "Налить кипяток", Status.DONE, Instant.parse("2025-02-23T17:05:00Z"),
+    checkTaskFields(task2, "Заварить чай", "Налить кипяток", Status.DONE,
+        Instant.parse("2025-02-23T17:05:00Z"),
         Duration.ofMinutes(30));
-    checkTaskFields(epic1, "Подарить подарок", "Купить подарок", Status.NEW, Instant.parse("2025-02-23T17:05:00Z"),
+    checkTaskFields(epic1, "Подарить подарок", "Купить подарок", Status.NEW,
+        Instant.parse("2025-02-23T17:05:00Z"),
         Duration.ofMinutes(45));
-    checkTaskFields(epic2, "Убрать квартиру", "Помыть полы", Status.NEW, Instant.parse("2025-02-23T17:05:00Z"),
+    checkTaskFields(epic2, "Убрать квартиру", "Помыть полы", Status.NEW,
+        Instant.parse("2025-02-23T17:05:00Z"),
         Duration.ofMinutes(60));
-    checkTaskFields(subtask1, "Написать сочинение", "Выбрать тему", Status.NEW, Instant.parse("2025-02-23T17:05:00Z"),
+    checkTaskFields(subtask1, "Написать сочинение", "Выбрать тему", Status.NEW,
+        Instant.parse("2025-02-23T17:05:00Z"),
         Duration.ofMinutes(75));
-    checkTaskFields(subtask2, "Написать курсовую", "Выбрать тему", Status.IN_PROGRESS, Instant.parse("2025-02-23T17:05:00Z"),
+    checkTaskFields(subtask2, "Написать курсовую", "Выбрать тему", Status.IN_PROGRESS,
+        Instant.parse("2025-02-23T17:05:00Z"),
         Duration.ofMinutes(90));
-    checkTaskFields(subtask3, "Сдать диплом", "Подготовить презентацию", Status.DONE, Instant.parse("2025-02-23T17:05:00Z"),
+    checkTaskFields(subtask3, "Сдать диплом", "Подготовить презентацию", Status.DONE,
+        Instant.parse("2025-02-23T17:05:00Z"),
         Duration.ofMinutes(105));
-    checkTaskFields(subtask4, "Сдать зачет", "Повторить теорию", Status.NEW, Instant.parse("2025-02-23T17:05:00Z"),
+    checkTaskFields(subtask4, "Сдать зачет", "Повторить теорию", Status.NEW,
+        Instant.parse("2025-02-23T17:05:00Z"),
         Duration.ofMinutes(120));
 
     historyManager.addHistory(task1);
@@ -151,21 +160,29 @@ class InMemoryHistoryManagerTest {
 
   @Test
   void getHistory() {
-    checkTaskFields(task1, "Построить дом", "Нанять строителей", Status.NEW, Instant.parse("2025-02-23T17:05:00Z"),
+    checkTaskFields(task1, "Построить дом", "Нанять строителей", Status.NEW,
+        Instant.parse("2025-02-23T17:05:00Z"),
         Duration.ofMinutes(15));
-    checkTaskFields(task2, "Заварить чай", "Налить кипяток", Status.DONE, Instant.parse("2025-02-23T17:05:00Z"),
+    checkTaskFields(task2, "Заварить чай", "Налить кипяток", Status.DONE,
+        Instant.parse("2025-02-23T17:05:00Z"),
         Duration.ofMinutes(30));
-    checkTaskFields(epic1, "Подарить подарок", "Купить подарок", Status.NEW, Instant.parse("2025-02-23T17:05:00Z"),
+    checkTaskFields(epic1, "Подарить подарок", "Купить подарок", Status.NEW,
+        Instant.parse("2025-02-23T17:05:00Z"),
         Duration.ofMinutes(45));
-    checkTaskFields(epic2, "Убрать квартиру", "Помыть полы", Status.NEW, Instant.parse("2025-02-23T17:05:00Z"),
+    checkTaskFields(epic2, "Убрать квартиру", "Помыть полы", Status.NEW,
+        Instant.parse("2025-02-23T17:05:00Z"),
         Duration.ofMinutes(60));
-    checkTaskFields(subtask1, "Написать сочинение", "Выбрать тему", Status.NEW, Instant.parse("2025-02-23T17:05:00Z"),
+    checkTaskFields(subtask1, "Написать сочинение", "Выбрать тему", Status.NEW,
+        Instant.parse("2025-02-23T17:05:00Z"),
         Duration.ofMinutes(75));
-    checkTaskFields(subtask2, "Написать курсовую", "Выбрать тему", Status.IN_PROGRESS, Instant.parse("2025-02-23T17:05:00Z"),
+    checkTaskFields(subtask2, "Написать курсовую", "Выбрать тему", Status.IN_PROGRESS,
+        Instant.parse("2025-02-23T17:05:00Z"),
         Duration.ofMinutes(90));
-    checkTaskFields(subtask3, "Сдать диплом", "Подготовить презентацию", Status.DONE, Instant.parse("2025-02-23T17:05:00Z"),
+    checkTaskFields(subtask3, "Сдать диплом", "Подготовить презентацию", Status.DONE,
+        Instant.parse("2025-02-23T17:05:00Z"),
         Duration.ofMinutes(105));
-    checkTaskFields(subtask4, "Сдать зачет", "Повторить теорию", Status.NEW, Instant.parse("2025-02-23T17:05:00Z"),
+    checkTaskFields(subtask4, "Сдать зачет", "Повторить теорию", Status.NEW,
+        Instant.parse("2025-02-23T17:05:00Z"),
         Duration.ofMinutes(120));
 
     historyManager.addHistory(task1);
@@ -203,6 +220,6 @@ class InMemoryHistoryManagerTest {
     historyManager.remove(3);
     historyManager.remove(1);
 
-    assertEquals(historyManager.getHistory().size(),historyManager.getHistory().stream().count());
+    assertEquals(historyManager.getHistory().size(), historyManager.getHistory().stream().count());
   }
 }

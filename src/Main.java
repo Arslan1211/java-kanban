@@ -17,16 +17,14 @@ public class Main {
     File file = new File("fileForSavingTasks.csv");
 
     TaskManager taskManager = new InMemoryTaskManager();
+    checkTaskManager(taskManager);
 
     FileBackedTaskManager fileBackedTaskManager;
     fileBackedTaskManager = new FileBackedTaskManager(new InMemoryHistoryManager(), file);
     checkTaskManager(fileBackedTaskManager);
 
     FileBackedTaskManager loadFromFile = FileBackedTaskManager.loadFromFile(file);
-    loadFromFile.deleteAllTasks();
-    loadFromFile.deleteAllEpics();
-    loadFromFile.deleteAllSubtasks();
-    checkTaskManager(loadFromFile);
+    System.out.println(loadFromFile.getPrioritizedTasks());
   }
 
   public static void checkTaskManager(TaskManager manager) {
