@@ -1,23 +1,23 @@
 package model;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 public class Subtask extends Task {
 
   private int epicId;
 
-  public Subtask(int epicId, String title, String description, Status status) {
-    super(title, description, status);
-    this.epicId = epicId;
-  }
-
-  public Subtask(int id, int epicId, String title, String description, Status status) {
-    super(id, title, description, status);
-    this.epicId = epicId;
-  }
-
   public Subtask(int id, String title, String description, Status status, int epicId) {
     super(id, title, description, status);
+    this.epicId = epicId;
+  }
+
+  public Subtask(int id, String title, String description, Status status, int epicId,
+      Instant startTime, Duration duration) {
+    super(id, title, description, status, startTime, duration);
     this.epicId = epicId;
   }
 
@@ -35,9 +35,19 @@ public class Subtask extends Task {
 
   @Override
   public String toString() {
-    String format = "Subtask ID: %d, название: '%s', описание: '%s', статус: %s";
-    return String.format(format, super.getId(), super.getTitle(), super.getDescription(),
-        super.getStatus());
+    return "Subtask{" +
+        "id=" + getId() +
+        ", name=" + getTitle() +
+        ", description=" + getDescription() +
+        ", status=" + getStatus() +
+        ", epicId=" + epicId +
+        ", startTime=" + ZonedDateTime.ofInstant(getStartTime(), ZoneId.systemDefault())
+        .format(formatter) +
+        ", duration=" + getDuration().toMinutes() +
+        ", endTime=" + ZonedDateTime.ofInstant(getStartTime().plus(getDuration()),
+            ZoneId.systemDefault())
+        .format(formatter) +
+        '}';
   }
 
   @Override
