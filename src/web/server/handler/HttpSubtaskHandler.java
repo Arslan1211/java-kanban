@@ -92,9 +92,11 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
     Subtask subtask = jsonMapper.fromJson(body, Subtask.class);
 
     if (isNull(subtask.getId())) {
+      taskManager.createSubtask(subtask);
       sendText(exchange, "Подзадача создана успешно.", 201);
 
     } else {
+      taskManager.updateSubtask(subtask);
       sendText(exchange, "Подзадача обновлена", 201);
     }
   }

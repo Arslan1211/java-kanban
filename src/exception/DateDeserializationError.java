@@ -1,8 +1,8 @@
 package exception;
 
-public class DateDesyrializationError extends RuntimeException {
+public class DateDeserializationError extends RuntimeException {
 
-  public DateDesyrializationError(String message) {
+  public DateDeserializationError(String message) {
     super(message);
   }
 }

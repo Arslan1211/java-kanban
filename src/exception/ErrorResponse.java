@@ -1,9 +1,10 @@
 package exception;
 
 public class ErrorResponse {
+
   private String errorMessage;
   private Integer errorCode;
-  private  String url;
+  private String url;
 
   public ErrorResponse(String errorMessage, Integer errorCode, String url) {
     this.errorMessage = errorMessage;

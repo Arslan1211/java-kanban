@@ -41,11 +41,11 @@ public class InstantTypeAdapter extends TypeAdapter<Instant> {
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import exception.DateDeserializationError;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -70,20 +70,9 @@ public class InstantTypeAdapter extends TypeAdapter<Instant> {
     String dateTimeString = jsonReader.nextString();
     try {
       LocalDateTime dateTime = LocalDateTime.parse(dateTimeString, formatter);
-
-      // Проверка, что дата не в прошлом
-      LocalDateTime now = LocalDateTime.now();
-    /*  if (dateTime.isBefore(now)) {
-        System.out.println("Дата находится в прошлом: " + dateTime);
-      } else {
-        System.out.println("Строка является корректной датой и не в прошлом: " + dateTime);
-      }*/
-      Instant instant = dateTime.atZone(ZoneId.systemDefault()).toInstant();
-      return instant;
-    } catch (
-        DateTimeParseException e) {
-      //System.out.println("Строка НЕ является корректной датой: " + e.getMessage());
+      return dateTime.toInstant(ZoneOffset.UTC);
+    } catch (DateTimeParseException e) {
+      throw new DateDeserializationError("Ошибка при разборе даты: " + e.getMessage());
     }
-    return null;
   }
 }

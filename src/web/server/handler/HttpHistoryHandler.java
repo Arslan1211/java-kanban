@@ -25,7 +25,7 @@ public class HttpHistoryHandler extends BaseHttpHandler {
     String path = requestURI.getPath();
     String[] urlParts = path.split("/");
 
-    if(method.equals("GET") && urlParts.length == 2) {
+    if (method.equals("GET") && urlParts.length == 2) {
       List<Task> history = taskManager.getHistory();
       String jsonText = jsonMapper.toJson(history);
       sendText(exchange, jsonText, 200);
