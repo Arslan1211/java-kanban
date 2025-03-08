@@ -37,11 +37,11 @@ public interface TaskManager {
 
   Subtask updateSubtask(Subtask subtask);
 
-  Task deleteTaskById(int id);
+  Task deleteTaskById(Integer id);
 
-  Epic deleteEpicById(int id);
+  Epic deleteEpicById(Integer id);
 
-  Subtask deleteSubtaskById(int id);
+  Subtask deleteSubtaskById(Integer id);
 
   void deleteAllTasks();
 

@@ -1,21 +1,20 @@
 package model;
 
+import adapter.DataTimeFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Task {
 
-  private int id;
+  private Integer id;
   private String title;
   private String description;
   private Status status;
   private Duration duration;
   private Instant startTime;
-  protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyy/HH:mm");
 
   public Task(String title, String description, Status status) {
     this.title = title;
@@ -33,6 +32,23 @@ public class Task {
   public Task(int id, String taskName, String description, Status taskStatus,
       Instant startTime, Duration duration) {
     this.id = id;
+    this.title = taskName;
+    this.description = description;
+    this.status = taskStatus;
+    this.duration = duration;
+    this.startTime = startTime;
+    this.getEndTime();
+  }
+
+  public Task(String taskName, String description, Instant startTime, Duration duration) {
+    this.title = taskName;
+    this.description = description;
+    this.startTime = startTime;
+    this.duration = duration;
+  }
+
+  public Task(String taskName, String description, Status taskStatus,
+      Instant startTime, Duration duration) {
     this.title = taskName;
     this.description = description;
     this.status = taskStatus;
@@ -107,11 +123,11 @@ public class Task {
         ", name=" + getTitle() +
         ", description=" + getDescription() +
         ", status=" + getStatus() +
-        ", startTime=" + ZonedDateTime.ofInstant(getStartTime(), ZoneId.systemDefault())
-        .format(formatter) +
+        ", startTime=" + ZonedDateTime.ofInstant(getEndTime(), ZoneId.systemDefault())
+        .format(DataTimeFormat.getDTF()) +
         ", duration=" + duration.toMinutes() +
         ", endTime=" + ZonedDateTime.ofInstant(getEndTime().plus(duration), ZoneId.systemDefault())
-        .format(formatter) +
+        .format(DataTimeFormat.getDTF()) +
         '}';
   }
 

@@ -1,5 +1,10 @@
 package service;
 
+import static java.util.Objects.isNull;
+
+import exception.EpicNotFoundException;
+import exception.SubtaskNotFoundException;
+import exception.TaskNotFoundException;
 import java.time.Duration;
 import java.time.Instant;
 import model.Epic;
@@ -156,12 +161,11 @@ public class InMemoryTaskManager implements TaskManager {
   @Override
   public Task createTask(Task task) {
     task.setId(idGenerate());
-    Task put = tasks.put(task.getId(), task);
     if (task.getStartTime() != null && hasTimeOverlap(task)) {
       tasks.put(task.getId(), task);
       addTaskInPrioritizedList(task);
     }
-    return put;
+    return tasks.put(task.getId(), task);
   }
 
   @Override
@@ -214,6 +218,10 @@ public class InMemoryTaskManager implements TaskManager {
   @Override
   public Task findTaskById(Integer id) {
     Task task = tasks.get(id);
+    if (isNull(task)) {
+      String errorMessage = String.format("Задача с id %d не найдена", id);
+      throw new TaskNotFoundException(errorMessage);
+    }
     historyManager.addHistory(task);
     return tasks.get(id);
   }
@@ -221,6 +229,10 @@ public class InMemoryTaskManager implements TaskManager {
   @Override
   public Epic findEpicById(Integer id) {
     Epic epic = epics.get(id);
+    if (epic == null) {
+      String errorMessage = String.format("Эпик с id %d не найден", id);
+      throw new EpicNotFoundException(errorMessage);
+    }
     historyManager.addHistory(epic);
     return epic;
   }
@@ -228,6 +240,10 @@ public class InMemoryTaskManager implements TaskManager {
   @Override
   public Subtask findSubtaskById(Integer id) {
     Subtask subtask = subtasks.get(id);
+    if (subtask == null) {
+      String errorMessage = String.format("Подзадача с id %d не найдена", id);
+      throw new SubtaskNotFoundException(errorMessage);
+    }
     historyManager.addHistory(subtask);
     return subtask;
   }
@@ -235,7 +251,8 @@ public class InMemoryTaskManager implements TaskManager {
   @Override
   public Task updateTask(Task task) {
     if (!tasks.containsKey(task.getId())) {
-      return null;
+      String errorMessage = String.format("Задача с id %d не найдена", task.getId());
+      throw new TaskNotFoundException(errorMessage);
     }
     if (task.getStartTime() != null && hasTimeOverlap(task)) {
       prioritizedTasks.remove(task);
@@ -248,7 +265,8 @@ public class InMemoryTaskManager implements TaskManager {
   @Override
   public Epic updateEpic(Epic epic) {
     if (!epics.containsKey(epic.getId())) {
-      return null;
+      String errorMessage = String.format("Эпик с id %d не найден", epic.getId());
+      throw new EpicNotFoundException(errorMessage);
     }
     Epic oldEpic = epics.put(epic.getId(), epic);
     Epic updatedEpic = epics.get(epic.getId());
@@ -260,7 +278,8 @@ public class InMemoryTaskManager implements TaskManager {
   @Override
   public Subtask updateSubtask(Subtask subtask) {
     if (!subtasks.containsKey(subtask.getId())) {
-      return null;
+      String errorMessage = String.format("Подзадача с id %d не найдена", subtask.getId());
+      throw new SubtaskNotFoundException(errorMessage);
     }
     prioritizedTasks.remove(subtask);
     subtasks.put(subtask.getId(), subtask);
@@ -272,17 +291,23 @@ public class InMemoryTaskManager implements TaskManager {
   }
 
   @Override
-  public Task deleteTaskById(int id) {
+  public Task deleteTaskById(Integer id) {
+    Task task = tasks.get(id);
+    if (isNull(task)) {
+      String errorMessage = String.format("Задача с id %d не найдена", id);
+      throw new TaskNotFoundException(errorMessage);
+    }
     prioritizedTasks.remove(tasks.remove(id));
     historyManager.remove(id);
     return tasks.remove(id);
   }
 
   @Override
-  public Epic deleteEpicById(int id) {
+  public Epic deleteEpicById(Integer id) {
     Epic epic = epics.get(id);
-    if (epic == null) {
-      return null;
+    if (isNull(epic)) {
+      String errorMessage = String.format("Эпик с id %d не найден", id);
+      throw new EpicNotFoundException(errorMessage);
     }
     Collection<Integer> subtaskIds = epic.getSubtaskIds();
     for (Integer subtaskId : subtaskIds) {
@@ -294,7 +319,7 @@ public class InMemoryTaskManager implements TaskManager {
   }
 
   @Override
-  public Subtask deleteSubtaskById(int id) {
+  public Subtask deleteSubtaskById(Integer id) {
     Subtask deletedSubtask = subtasks.remove(id);
     Epic epic = epics.get(deletedSubtask.getEpicId());
     epic.deleteSubtask(deletedSubtask.getId());
