@@ -1,9 +1,5 @@
 package web.server;
 
-import adapter.DurationTypeAdapter;
-import adapter.InstantTypeAdapter;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -30,20 +26,16 @@ public class HttpTaskServer {
     httpServer = HttpServer.create();
     httpServer.bind(new InetSocketAddress("localhost", 8080), 0);
 
-    Gson jsonMapper = new GsonBuilder()
-        .registerTypeAdapter(Instant.class, new InstantTypeAdapter())
-        .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
-        .create();
     httpServer.createContext("/tasks",
-        new HttpTaskHandler(taskManager, jsonMapper));
+        new HttpTaskHandler(taskManager));
     httpServer.createContext("/epics",
-        new HttpEpicHandler(taskManager, jsonMapper));
+        new HttpEpicHandler(taskManager));
     httpServer.createContext("/subtasks",
-        new HttpSubtaskHandler(taskManager, jsonMapper));
+        new HttpSubtaskHandler(taskManager));
     httpServer.createContext("/history",
-        new HttpHistoryHandler(taskManager, jsonMapper));
+        new HttpHistoryHandler(taskManager));
     httpServer.createContext("/prioritized",
-        new HttpPrioritizedHandler(taskManager, jsonMapper));
+        new HttpPrioritizedHandler(taskManager));
   }
 
   public void start() {
@@ -63,19 +55,19 @@ public class HttpTaskServer {
         "название",
         "описание",
         Status.NEW,
-        Instant.now(),
+        Instant.now().plusSeconds(100_000),
         Duration.ofMinutes(15)));
     taskManager.createEpic(new Epic(
         "название",
         "описание",
-        Instant.now(),
+        Instant.now().plusSeconds(2_000),
         Duration.ofMinutes(25)));
     taskManager.createSubtask(new Subtask(
         "название",
         "описание",
         Status.NEW,
         2,
-        Instant.now(),
+        Instant.now().plusSeconds(5_000),
         Duration.ofMinutes(45)));
   }
 }

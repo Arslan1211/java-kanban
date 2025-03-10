@@ -1,43 +1,5 @@
 package adapter;
 
-/*
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-
-import java.io.IOException;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-
-public class InstantTypeAdapter extends TypeAdapter<Instant> {
-
-  protected DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss/dd.MM.yyyy");
-
-  @Override
-  public void write(JsonWriter out, Instant value) throws IOException {
-    if (value != null) {
-      String formattedDate = OffsetDateTime.ofInstant(value, ZoneOffset.UTC).format(formatter);
-      out.value(formattedDate);
-    } else {
-      out.nullValue();
-    }
-  }
-
-  @Override
-  public Instant read(JsonReader in) throws IOException {
-    String dateTimeString = in.nextString();
-    try {
-      OffsetDateTime offsetDateTime = OffsetDateTime.parse(dateTimeString, formatter);
-      return offsetDateTime.toInstant();
-    } catch (DateTimeParseException e) {
-      throw  new IOException("Ошибка при парсинге даты: " + dateTimeString, e);
-    }
-  }
-}*/
-
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;

@@ -2,7 +2,6 @@ package web.server.handler;
 
 import static java.util.Objects.isNull;
 
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import exception.ErrorResponse;
 import exception.TaskNotFoundException;
@@ -16,11 +15,9 @@ import service.TaskManager;
 public class HttpSubtaskHandler extends BaseHttpHandler {
 
   private final TaskManager taskManager;
-  private final Gson jsonMapper;
 
-  public HttpSubtaskHandler(TaskManager taskManager, Gson jsonMapper) {
+  public HttpSubtaskHandler(TaskManager taskManager) {
     this.taskManager = taskManager;
-    this.jsonMapper = jsonMapper;
   }
 
   @Override
@@ -28,31 +25,31 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
 
     String method = exchange.getRequestMethod();
 
-    try {
+    try (exchange) {
       switch (method) {
-        case "GET":
+        case METHOD_GET:
           handleGet(exchange);
           break;
-        case "POST":
+        case METHOD_POST:
           handlePost(exchange);
           break;
-        case "DELETE":
+        case METHOD_DELETE:
           handleDelete(exchange);
           break;
         default:
           defaultErrorResponse(exchange, method);
       }
     } catch (TaskNotFoundException e) {
-      ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 404,
+      ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HTTP_NOT_FOUND,
           exchange.getRequestURI().getPath());
       String jsonText = jsonMapper.toJson(errorResponse);
-      sendText(exchange, jsonText, 404);
+      sendText(exchange, jsonText, HTTP_NOT_FOUND);
 
     } catch (Exception e) {
-      ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 500,
+      ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HTTP_INTERNAL_SERVER_ERROR,
           exchange.getRequestURI().getPath());
       String jsonText = jsonMapper.toJson(errorResponse);
-      sendText(exchange, jsonText, 500);
+      sendText(exchange, jsonText, HTTP_INTERNAL_SERVER_ERROR);
     } finally {
       exchange.close();
     }
@@ -61,10 +58,10 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
   private void defaultErrorResponse(HttpExchange exchange, String method) throws IOException {
     ErrorResponse errorResponse = new ErrorResponse(
         String.format("Обработка метода %s не предусмотрена", method),
-        405,
+        HTTP_METHOD_NOT_ALLOWED,
         exchange.getRequestURI().getPath());
     String jsonText = jsonMapper.toJson(errorResponse);
-    sendText(exchange, jsonText, 405);
+    sendText(exchange, jsonText, HTTP_METHOD_NOT_ALLOWED);
   }
 
   private void handleGet(HttpExchange exchange) throws IOException {
@@ -76,13 +73,13 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
       Integer id = Integer.parseInt(urlParts[2]);
       Subtask getSubtaskById = taskManager.findSubtaskById(id);
       String json = jsonMapper.toJson(getSubtaskById);
-      sendText(exchange, json, 200);
+      sendText(exchange, json, HTTP_OK);
 
     }
     if (urlParts.length == 2) {
       Collection<Subtask> allSubtask = taskManager.findAllSubtasks();
       String json = jsonMapper.toJson(allSubtask);
-      sendText(exchange, json, 200);
+      sendText(exchange, json, HTTP_OK);
     }
   }
 
@@ -93,11 +90,11 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
 
     if (isNull(subtask.getId())) {
       taskManager.createSubtask(subtask);
-      sendText(exchange, "Подзадача создана успешно.", 201);
+      sendText(exchange, "Подзадача создана успешно.", HTTP_CREATED);
 
     } else {
       taskManager.updateSubtask(subtask);
-      sendText(exchange, "Подзадача обновлена", 201);
+      sendText(exchange, "Подзадача обновлена", HTTP_CREATED);
     }
   }
 
@@ -109,6 +106,6 @@ public class HttpSubtaskHandler extends BaseHttpHandler {
 
     Subtask deletedSubtaskById = taskManager.deleteSubtaskById(id);
     String json = jsonMapper.toJson(deletedSubtaskById);
-    sendText(exchange, "Подзадача успешно удаленна: " + json, 200);
+    sendText(exchange, "Подзадача успешно удаленна: " + json, HTTP_OK);
   }
 }

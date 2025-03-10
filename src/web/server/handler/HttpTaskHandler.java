@@ -2,7 +2,6 @@ package web.server.handler;
 
 import static java.util.Objects.*;
 
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import exception.ErrorResponse;
 import exception.TaskNotFoundException;
@@ -16,11 +15,9 @@ import service.TaskManager;
 public class HttpTaskHandler extends BaseHttpHandler {
 
   private final TaskManager taskManager;
-  private final Gson jsonMapper;
 
-  public HttpTaskHandler(TaskManager taskManager, Gson jsonMapper) {
+  public HttpTaskHandler(TaskManager taskManager) {
     this.taskManager = taskManager;
-    this.jsonMapper = jsonMapper;
   }
 
   @Override
@@ -28,31 +25,31 @@ public class HttpTaskHandler extends BaseHttpHandler {
 
     String method = exchange.getRequestMethod();
 
-    try {
+    try (exchange) {
       switch (method) {
-        case "GET":
+        case METHOD_GET:
           handleGet(exchange);
           break;
-        case "POST":
+        case METHOD_POST:
           handlePost(exchange);
           break;
-        case "DELETE":
+        case METHOD_DELETE:
           handleDelete(exchange);
           break;
         default:
           defaultErrorResponse(exchange, method);
       }
     } catch (TaskNotFoundException e) {
-      ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 404,
+      ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HTTP_NOT_FOUND,
           exchange.getRequestURI().getPath());
       String jsonText = jsonMapper.toJson(errorResponse);
-      sendText(exchange, jsonText, 404);
+      sendText(exchange, jsonText, HTTP_NOT_FOUND);
 
     } catch (Exception e) {
-      ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 500,
+      ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HTTP_INTERNAL_SERVER_ERROR,
           exchange.getRequestURI().getPath());
       String jsonText = jsonMapper.toJson(errorResponse);
-      sendText(exchange, jsonText, 500);
+      sendText(exchange, jsonText, HTTP_INTERNAL_SERVER_ERROR);
     } finally {
       exchange.close();
     }
@@ -61,10 +58,10 @@ public class HttpTaskHandler extends BaseHttpHandler {
   private void defaultErrorResponse(HttpExchange exchange, String method) throws IOException {
     ErrorResponse errorResponse = new ErrorResponse(
         String.format("Обработка метода %s не предусмотрена", method),
-        405,
+        HTTP_METHOD_NOT_ALLOWED,
         exchange.getRequestURI().getPath());
     String jsonText = jsonMapper.toJson(errorResponse);
-    sendText(exchange, jsonText, 405);
+    sendText(exchange, jsonText, HTTP_METHOD_NOT_ALLOWED);
   }
 
   private void handleGet(HttpExchange exchange) throws IOException {
@@ -76,13 +73,13 @@ public class HttpTaskHandler extends BaseHttpHandler {
       Integer id = Integer.parseInt(urlParts[2]);
       Task getTaskById = taskManager.findTaskById(id);
       String json = jsonMapper.toJson(getTaskById);
-      sendText(exchange, json, 200);
+      sendText(exchange, json, HTTP_OK);
     }
 
     if (urlParts.length == 2) {
       Collection<Task> allTasks = taskManager.findAllTasks();
       String json = jsonMapper.toJson(allTasks);
-      sendText(exchange, json, 200);
+      sendText(exchange, json, HTTP_OK);
     }
   }
 
@@ -93,11 +90,11 @@ public class HttpTaskHandler extends BaseHttpHandler {
 
     if (isNull(task.getId())) {
       taskManager.createTask(task);
-      sendText(exchange, "Задача создана успешно.", 201);
+      sendText(exchange, "Задача создана успешно.", HTTP_CREATED);
 
     } else {
       taskManager.updateTask(task);
-      sendText(exchange, "Задача обновлена", 201);
+      sendText(exchange, "Задача обновлена", HTTP_CREATED);
     }
   }
 
@@ -109,7 +106,7 @@ public class HttpTaskHandler extends BaseHttpHandler {
     if (urlParts.length == 3) {
       Integer id = Integer.parseInt(urlParts[2]);
       taskManager.deleteTaskById(id);
-      sendText(exchange, "Задача успешно удаленна.", 200);
+      sendText(exchange, "Задача успешно удаленна.", HTTP_OK);
     }
   }
 }
