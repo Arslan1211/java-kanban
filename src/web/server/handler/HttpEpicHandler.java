@@ -50,8 +50,6 @@ public class HttpEpicHandler extends BaseHttpHandler {
           exchange.getRequestURI().getPath());
       String jsonText = jsonMapper.toJson(errorResponse);
       sendText(exchange, jsonText, HTTP_INTERNAL_SERVER_ERROR);
-    } finally {
-      exchange.close();
     }
   }
 
