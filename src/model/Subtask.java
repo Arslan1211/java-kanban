@@ -1,5 +1,6 @@
 package model;
 
+import adapter.DataTimeFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -18,6 +19,12 @@ public class Subtask extends Task {
   public Subtask(int id, String title, String description, Status status, int epicId,
       Instant startTime, Duration duration) {
     super(id, title, description, status, startTime, duration);
+    this.epicId = epicId;
+  }
+
+  public Subtask(String title, String description, Status status, int epicId,
+      Instant startTime, Duration duration) {
+    super(title, description, status, startTime, duration);
     this.epicId = epicId;
   }
 
@@ -42,11 +49,11 @@ public class Subtask extends Task {
         ", status=" + getStatus() +
         ", epicId=" + epicId +
         ", startTime=" + ZonedDateTime.ofInstant(getStartTime(), ZoneId.systemDefault())
-        .format(formatter) +
+        .format(DataTimeFormat.getDTF()) +
         ", duration=" + getDuration().toMinutes() +
         ", endTime=" + ZonedDateTime.ofInstant(getStartTime().plus(getDuration()),
             ZoneId.systemDefault())
-        .format(formatter) +
+        .format(DataTimeFormat.getDTF()) +
         '}';
   }
 
